@@ -1,0 +1,36 @@
+Hello Engineers!
+
+For now, in development, I have chosen port "3004" for testing purposes in the environment file (this can be  I guess)
+
+Also, for development purpose, I am using a test database (Compass), I will reach out to Marv to know if this is okay though.
+
+So here is an explanation of the config folder. 
+- The config folder contains 2 files. 
+    🔸 The config.env stores your environment variables. The "PORT" and "DB_URL" variables are stored in here.
+    🔸 The database.js stores your database connection code.
+        Here is the sample code of the database.js file in the config folder:
+        
+            const mongoose = require('mongoose');
+
+            const connectDatabase = ( ) => {
+                mongoose.connect(process.env.DB_URI, {
+                    useNewUrlParser:true,
+                    useUnifiedTopology:true,
+                })
+                .then(()=> {
+                    console.log('Database Connected Successfully!');
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+                    
+                };
+
+
+            module.exports = connectDatabase;
+    
+When you clone the repository, you may decide to change it to a code that soothes you and add the folder to the .gitignore file.
+
+
+
+Also, the LICENCE and the README files will be updated as we progress on the project.  
