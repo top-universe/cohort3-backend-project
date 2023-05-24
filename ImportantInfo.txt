@@ -6,7 +6,7 @@ Also, for development purpose, I am using a test database (Compass), I will reac
 
 So here is an explanation of the config folder. 
 - The config folder contains 2 files. 
-    🔸 The config.env stores your environment variables. The "PORT" and "DB_URL" variables are stored in here.
+    🔸 The ./config/.env stores your environment variables. The "PORT" and "DB_URL" variables are stored in here.
     🔸 The database.js stores your database connection code.
         Here is the sample code of the database.js file in the config folder:
         
