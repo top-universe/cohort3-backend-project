@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-// const validator = require("validator");
+const {model,Schema} = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   firstName: {
     type: String,
     // required: [true, "Please enter a firstName"],
@@ -17,7 +16,6 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    /* validator: [validator.isEmail, "Please enter a valid email"], */
     required: true,
     validate: {
       validator: function (v) {
@@ -35,7 +33,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: "User",
+    default: "student",
   },
   isVerified: {
     type: Boolean,
@@ -46,5 +44,5 @@ const userSchema = new mongoose.Schema({
     default: null,
   },
 });
-
-module.exports = mongoose.model("User", userSchema);
+const studentModel = model("Student", userSchema)
+module.exports = studentModel;

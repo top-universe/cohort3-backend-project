@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const connectDatabase = () => {
+const connectToDB = () => {
   mongoose
     .connect(process.env.DB_URI, {
       useNewUrlParser: true,
@@ -10,8 +10,8 @@ const connectDatabase = () => {
       console.log("Database Connected Successfully");
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err.toString());
     });
 };
 
-module.exports = connectDatabase;
+module.exports = connectToDB;
