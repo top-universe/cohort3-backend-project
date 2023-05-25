@@ -2,6 +2,13 @@ const userModel = require("../models/studentModel");
 const { hash_password, compare_password } = require("../utils/Password.js");
 const { sendResponse, generate_token, generate_link } = require("../utils/sendResponse");
 
+// Payload for userModel to generate token 
+const payload = {
+  user: {
+    email,
+    password
+  }
+};
 // @desc - Register new User
 // @routes - api/users - POST
 // @access - Public
@@ -11,24 +18,17 @@ const Register = async (req, res) => {
     let { email, password } = req.body;
     // validate - to ensure all required field were submitted
     if (!email || !password) {
-      return sendResponse(res, 400, "All fields are required");}
+      return sendResponse(res, 400, "All fields are required");
+    }
     // Check for duplicates
     const userExists = await userModel.findOne({ email });
     if (userExists) {
-      sendResponse(res,409,"Email Already in use.");
+      sendResponse(res, 409, "Email Already in use.");
     }
-   
+
     // Hash the password - BCRYPT
     password = await hash_password(password);
 
-    // Generate a verification Link 
-    // Payload for userModel to generate token 
-    const payload = {
-      user: {
-        email,
-        password
-      }
-    };
     // 1. generate a token
     const token = await generate_token(payload);
     // 2. Generate Link and append that token to the link
@@ -45,10 +45,10 @@ const Register = async (req, res) => {
 
     // send success response
     // data property contains verification link while postmark isnt in use now
-    sendResponse(res,201,"Registration Successful. Verification link sent to your email.",link)
+    sendResponse(res, 201, "Registration Successful. Verification link sent to your email.", link)
   } catch (err) {
     // send back error
-    sendResponse(res,501,err.toString());
+    sendResponse(res, 501, err.toString());
   }
 };
 
@@ -85,20 +85,20 @@ const Verify = async (req, res) => {
   try {
     // Fetch the verification token from the request params
     const { id } = req.params;
-    
+
     // Find the user with the matching verification token
     const student = await userModel.findOne({ verificationToken: id });
-    
+
     // Check if user exists
     if (!student) {
       return sendResponse(res, 404, "Student not found");
     }
-    
+
     // Update the user's verification status and remove the verification token
     student.isVerified = true;
     student.verificationToken = undefined;
     await student.save();
-    
+
     // Return a success response
     return sendResponse(res, 200, "Email verified successfully");
   } catch (error) {
@@ -110,12 +110,62 @@ const Verify = async (req, res) => {
 // @desc - View user profile
 // @routes - api/users/profile
 // @access - Private
-const Profile = () => { };
+const Profile = async (req, res) => {
+  try {
+    // Get the user ID from the authenticated user or request parameters
+    const {email} = req.user; // or req.params.id
+
+    // Retrieve the user profile from the database
+    const user = await User.findOne({ email });
+
+    // Check if the user exists
+    if (!user) {
+      return sendResponse(res, 404, 'User not found');
+    }
+    // Return the user profile as the response
+    return sendResponse(res, 200, "User profile retrieved successfully.", user);
+  } catch (error) {
+    // Handle any errors that occur during the retrieval process
+    return sendResponse(res,500,error.toString());
+  }
+};
 
 // @desc - View user profile
 // @routes - api/users/profile
 // @access - Private
-const Update = () => { };
+const Update = async (req, res) => {
+  try {
+    // Get user email from the authenticated JWT payload
+    const userEmail = req.user.email;
+
+    // Get updated user data from request body
+    const { name, email } = req.body;
+
+    // Find the user by email in the database
+    const user = await userModel.findOne({ email: userEmail });
+
+    // Check if the user exists
+    if (!user) {
+      return sendResponse(res,404,"User not found");
+    }
+
+    // Update the user's data
+    if (name) {
+      user.name = name;
+    }
+    if (email) {
+      user.email = email;
+    }
+
+    // Save the updated user data in the database
+    await user.save();
+
+    // Return the updated user data in the response
+    return sendResponse(res,200,"User profile updated successfully", user);
+  } catch (error) {
+    return sendResponse(res,500,"Failed to update user profile",error.toString());
+  }
+};
 
 
 // @desc - reset user password
@@ -124,7 +174,7 @@ const Update = () => { };
 const resetPassword = async (req, res) => {
   try {
     // Get the user's email from the request body
-    const { email,password } = req.user;
+    const { email, password } = req.user;
 
     // Find the user with the matching email
     const user = await userModel.findOne({ email });
