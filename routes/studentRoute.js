@@ -1,6 +1,6 @@
 const express = require("express");
 const userRoutes = express.Router();
-const { Register, Verify, Login, Profile, Update, resetPassword } = require("../controllers/studentController");
+const { Register, Verify, Login, Profile, Update, changePassword,forgotPassword,resetPassword } = require("../controllers/studentController");
 const {studentAuth}=require("../middleware/auth")
 
 // student-routes
@@ -14,10 +14,12 @@ userRoutes.get("/users/profile",studentAuth,Profile)
 userRoutes.put("users/profile",studentAuth,Update)
 // api/users/verify - Email verification
 userRoutes.get("/users/verify/:id", Verify);
-// api/users/reset_password - Reset/Forgotten Password
+// api/users/reset_password - Change Password
+userRoutes.post("users/change_password", changePassword)
+// api/users/reset_password - Forgot Password
+userRoutes.post("users/forgot_password", forgotPassword)
+// api/users/reset_password - Reset Password
 userRoutes.post("users/reset_password", resetPassword)
-
-
 // exports
 module.exports = UserRoutes;
 

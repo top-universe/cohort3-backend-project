@@ -8,7 +8,7 @@ server.use(express.json());
 // Mounting Routes
 server.use(router);
 
-PORT = process.env.PORT || 3550;
+const PORT = process.env.PORT || 3550;
 
 // Connect Database
 connectToDB();

@@ -13,7 +13,7 @@ const studentAuth = function (req, res, next) {
         }
         const decoded = jwt_verify(token);
         const userRole = decoded.user.role;
-        const userVerified= decoded.user.email;
+        const userVerified= decoded.user.isVerified;
         if (userRole !== 'student') {
             return sendResponse(res, 403, 'Not authorized to access this resource');
         } 

@@ -6,7 +6,7 @@ const { sendResponse, generate_token, generate_link } = require("../utils/sendRe
 const payload = {
   user: {
     email,
-    password
+    password,
   }
 };
 // @desc - Register new User
@@ -116,7 +116,7 @@ const Profile = async (req, res) => {
     const {email} = req.user; // or req.params.id
 
     // Retrieve the user profile from the database
-    const user = await User.findOne({ email });
+    const user = await userModel.findOne({ email });
 
     // Check if the user exists
     if (!user) {
@@ -138,9 +138,6 @@ const Update = async (req, res) => {
     // Get user email from the authenticated JWT payload
     const userEmail = req.user.email;
 
-    // Get updated user data from request body
-    const { name, email } = req.body;
-
     // Find the user by email in the database
     const user = await userModel.findOne({ email: userEmail });
 
@@ -150,11 +147,8 @@ const Update = async (req, res) => {
     }
 
     // Update the user's data
-    if (name) {
-      user.name = name;
-    }
-    if (email) {
-      user.email = email;
+    if (userEmail) {
+      user.email = userEmail;
     }
 
     // Save the updated user data in the database
@@ -168,10 +162,10 @@ const Update = async (req, res) => {
 };
 
 
-// @desc - reset user password
-// @routes - api/users/reset-password
+// @desc - change user password
+// @routes - api/users/change-password
 // @access - Private
-const resetPassword = async (req, res) => {
+const changePassword = async (req, res) => {
   try {
     // Get the user's email from the request body
     const { email, password } = req.user;
@@ -183,6 +177,7 @@ const resetPassword = async (req, res) => {
     if (!user) {
       return sendResponse(res, 404, "User not found");
     }
+
     // Hash the new password
     const hashedPassword = await hash_password(password);
 
@@ -196,5 +191,61 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// @desc - forgot user password
+// @routes - api/users/forgot-password
+// @access - Private
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
 
-module.exports = { Register, Login, Verify, Profile, Update, resetPassword };
+  try {
+    // Check if the user with the given email exists
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return sendResponse(res,404,'User not found');
+    }
+
+    // Generate a password reset token
+    const resetToken = await generate_token(email);
+
+    // Store the reset token and its expiration in the user's document
+    user.verification_token = resetToken;
+    await user.save();
+
+    // Return the reset token as part of the JSON response
+    return sendResponse(res,200,"Token Generated",generate_link(resetToken))
+  } catch (error) {
+    return sendResponse(res,500,'Internal Server Error');
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    // Get the user's email, password, and verification token from the request body
+    const { email, password, token } = req.body;
+
+    // Find the user with the matching email and verification token
+    const user = await userModel.findOne({ email, verification_token: token });
+
+    // Check if user exists and the verification token is valid
+    if (!user) {
+      return sendResponse(res, 404, "Invalid verification token");
+    }
+
+    // Hash the new password
+    const hashedPassword = await hash_password(password);
+
+    // Update the user's password
+    user.password = hashedPassword;
+    // Clear the reset token
+    user.resetToken = undefined;
+    await user.save();
+
+    // Return a success response
+    return sendResponse(res, 200, "Password reset successfully");
+  } catch (error) {
+    return sendResponse(res, 500, error.toString());
+  }
+};
+
+
+module.exports = { Register, Login, Verify, Profile, Update, changePassword,forgotPassword,resetPassword };
