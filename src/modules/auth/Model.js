@@ -1,7 +1,9 @@
 const AuthRepository = require("./Repository");
 
 const AuthModel = {
+
   checkIfUserExists: async (email) => {
+
     return await AuthRepository.checkIfEmailExist(email);
   },
 
@@ -12,6 +14,7 @@ const AuthModel = {
   UpdateUser: async (id, updatedData) => {
     return await AuthRepository.updateRecord(id, updatedData);
   },
+
 };
 
 module.exports = AuthModel;

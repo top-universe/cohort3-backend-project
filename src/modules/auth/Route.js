@@ -7,6 +7,7 @@ const AuthController = require("./Controller");
 userRoutes.post("/users", AuthController.Register);
 
 // api/users/auth - login
+
 userRoutes.post("/users/login", AuthController.Login);
 
 // api/users/emailverification - Email verification

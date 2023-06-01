@@ -9,10 +9,12 @@ const AuthController = {
    * @returns - sends a verification email to user and success a message if everything checks
    */
 
+
   Register: async (req, res) => {
     try {
       // receive input
       let { email, password } = req.body;
+
 
       // validate - to ensure all required field were submitted
       if (!email || !password) {
@@ -45,12 +47,16 @@ const AuthController = {
       const user = await AuthModel.signUp({
         email,
         password,
+
         verificationToken: token,
+
       });
 
       // send success response
       // data property contains verification link while postmark isnt in use now
+
       helper.Response(
+
         res,
         201,
         "Registration Successful. Verification link sent to your email.",
@@ -58,6 +64,7 @@ const AuthController = {
       );
     } catch (err) {
       // send back error
+
       helper.Response(res, 501, err.toString());
     }
   },
@@ -68,11 +75,11 @@ const AuthController = {
    * @param {*} res
    * @returns - a successful message if login credentials are valid
    */
-
   Login: async (req, res) => {
     const { email, password } = req.body;
 
     try {
+
       // Check if email and password was supplied
       if (!email || !password) {
         return helper.Response(res, 400, "All fields are required");
@@ -80,11 +87,13 @@ const AuthController = {
       // Find the user by email
       const user = await AuthModel.checkIfUserExists(email);
 
+
       if (!user) {
         return sendResponse(res, 404, "User not found");
       }
 
       // Compare the provided password with the stored password
+
       const checkPassword = await helper.matchPasswords(
         password,
         user.password
@@ -98,10 +107,12 @@ const AuthController = {
 
       // Success message if everything goes well
       return helper.Response(res, 200, "Login successful", { accessToken });
+
     } catch (error) {
       return sendResponse(res, 500, "Internal server error");
     }
   },
+
 
   /**
    * This controller function handles email verification
@@ -178,10 +189,12 @@ const AuthController = {
 
       // Return a success response
       return helper.Response(res, 200, "Password Reset link sent", link);
+
     } catch (error) {
       return sendResponse(res, 500, error.toString());
     }
   },
+
 
   changePassword: async (req, res) => {
     try {
@@ -213,6 +226,7 @@ const AuthController = {
       return helper.Response(res, 500, "Server error");
     }
   },
+
 };
 
 module.exports = AuthController;
