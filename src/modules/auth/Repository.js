@@ -17,3 +17,18 @@ exports.createAccount = async (input) => {
     throw err;
   }
 };
+
+
+// Function to update the database record
+exports.updateRecord = async (id, updatedData) => {
+  try {
+    // Update the record by ID and return the updated record
+    const updatedRecord = await User.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
+    return updatedRecord;
+  } catch (err) {
+    throw err;
+  }
+};
+

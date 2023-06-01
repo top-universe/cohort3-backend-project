@@ -7,12 +7,17 @@ const AuthController = require("./Controller");
 userRoutes.post("/users", AuthController.Register);
 
 // api/users/auth - login
-userRoutes.post("users/login", AuthController.Login);
 
-// api/users/verify - Email verification
-userRoutes.get("/users/verify/:id", AuthController.Verify);
+userRoutes.post("/users/login", AuthController.Login);
 
-// api/users/reset_password - Reset Password
-userRoutes.post("users/reset_password", AuthController.resetPassword);
+// api/users/emailverification - Email verification
+userRoutes.put("/users/verifyemail/:token", AuthController.emailVerification);
+
+// api/users/forgotpassword - Initiate Forgot Password
+userRoutes.post("/users/forgotpassword", AuthController.forgotPassword);
+
+// api/users/changepassword - Finalize Forgot Password
+userRoutes.post("/users/changepassword/:token", AuthController.changePassword);
+
 // exports
 module.exports = userRoutes;
