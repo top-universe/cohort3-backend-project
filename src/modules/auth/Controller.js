@@ -1,5 +1,6 @@
 const AuthModel = require("./Model");
 const helper = require("../../utils/helpers");
+const { sendEmail } = require("../../services/postmarkMailer");
 
 const AuthController = {
   /**
@@ -9,12 +10,10 @@ const AuthController = {
    * @returns - sends a verification email to user and success a message if everything checks
    */
 
-
   Register: async (req, res) => {
     try {
       // receive input
       let { email, password } = req.body;
-
 
       // validate - to ensure all required field were submitted
       if (!email || !password) {
@@ -37,26 +36,23 @@ const AuthController = {
       const link = helper.generateLink(keyPath, token);
 
       // Email the verification Link to the user
-      /*
-
-        Postmark will be used for this implementation in future amendment
-
-      */
+      await sendEmail(
+        email,
+        "Account Verification",
+        `Kindly click on the link to proceed with your account verification ${link}`
+      );
 
       // save to the records to database
       const user = await AuthModel.signUp({
         email,
         password,
-
         verificationToken: token,
-
       });
 
       // send success response
       // data property contains verification link while postmark isnt in use now
 
       helper.Response(
-
         res,
         201,
         "Registration Successful. Verification link sent to your email.",
@@ -79,14 +75,12 @@ const AuthController = {
     const { email, password } = req.body;
 
     try {
-
       // Check if email and password was supplied
       if (!email || !password) {
         return helper.Response(res, 400, "All fields are required");
       }
       // Find the user by email
       const user = await AuthModel.checkIfUserExists(email);
-
 
       if (!user) {
         return sendResponse(res, 404, "User not found");
@@ -107,12 +101,10 @@ const AuthController = {
 
       // Success message if everything goes well
       return helper.Response(res, 200, "Login successful", { accessToken });
-
     } catch (error) {
       return sendResponse(res, 500, "Internal server error");
     }
   },
-
 
   /**
    * This controller function handles email verification
@@ -181,21 +173,25 @@ const AuthController = {
       const link = helper.generateLink(keyPath, token);
 
       // Email the Password Reset Link to the user
-      /*
-
-        Postmark will be used for this implementation in future amendment
-
-      */
+      await sendEmail(
+        email,
+        "Password Reset",
+        `Click on the link to proceed with your password reset ${link}`
+      );
 
       // Return a success response
       return helper.Response(res, 200, "Password Reset link sent", link);
-
     } catch (error) {
-      return sendResponse(res, 500, error.toString());
+      return helper.Response(res, 500, error.toString());
     }
   },
 
-
+  /**
+   * This controller function handles the User's change of password after initiating the password reset
+   * @param {*} req
+   * @param {*} res
+   * @returns
+   */
   changePassword: async (req, res) => {
     try {
       // receive input
@@ -226,7 +222,6 @@ const AuthController = {
       return helper.Response(res, 500, "Server error");
     }
   },
-
 };
 
 module.exports = AuthController;
