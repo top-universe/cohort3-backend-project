@@ -1,3 +1,4 @@
+
 const helper = require("../utils/helpers");
 require("dotenv").config();
 
@@ -38,4 +39,3 @@ const userAuthenticate = async function (req, res, next) {
   }
 }; */
 
-module.exports = { userAuthenticate, userAuthorize };

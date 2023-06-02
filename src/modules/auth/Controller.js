@@ -46,11 +46,13 @@ const AuthController = {
       const user = await AuthModel.signUp({
         email,
         password,
+
         verificationToken: token,
       });
 
       // send success response
       // data property contains verification link while postmark isnt in use now
+
       helper.Response(
         res,
         201,
@@ -59,6 +61,7 @@ const AuthController = {
       );
     } catch (err) {
       // send back error
+
       helper.Response(res, 501, err.toString());
     }
   },
@@ -69,7 +72,6 @@ const AuthController = {
    * @param {*} res
    * @returns - a successful message if login credentials are valid
    */
-
   Login: async (req, res) => {
     const { email, password } = req.body;
 
@@ -86,6 +88,7 @@ const AuthController = {
       }
 
       // Compare the provided password with the stored password
+
       const checkPassword = await helper.matchPasswords(
         password,
         user.password

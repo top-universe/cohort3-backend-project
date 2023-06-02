@@ -18,6 +18,7 @@ exports.createAccount = async (input) => {
   }
 };
 
+
 // Function to update the database record
 exports.updateRecord = async (id, updatedData) => {
   try {
@@ -30,3 +31,4 @@ exports.updateRecord = async (id, updatedData) => {
     throw err;
   }
 };
+
