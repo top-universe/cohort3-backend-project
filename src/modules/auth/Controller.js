@@ -1,5 +1,6 @@
 const AuthModel = require("./Model");
 const helper = require("../../utils/helpers");
+const { sendEmail } = require("../../services/postmarkMailer");
 
 const AuthController = {
   /**
@@ -35,11 +36,11 @@ const AuthController = {
       const link = helper.generateLink(keyPath, token);
 
       // Email the verification Link to the user
-      /*
-
-        Postmark will be used for this implementation in future amendment
-
-      */
+      await sendEmail(
+        email,
+        "Account Verification",
+        `Kindly click on the link to proceed with your account verification ${link}`
+      );
 
       // save to the records to database
       const user = await AuthModel.signUp({
@@ -170,11 +171,11 @@ const AuthController = {
       const link = helper.generateLink(keyPath, token);
 
       // Email the Password Reset Link to the user
-      /*
-
-        Postmark will be used for this implementation in future amendment
-
-      */
+      await sendEmail(
+        email,
+        "Password Reset",
+        `Click on the link to proceed with your password reset ${link}`
+      );
 
       // Return a success response
       return helper.Response(res, 200, "Password Reset link sent", link);
@@ -183,6 +184,12 @@ const AuthController = {
     }
   },
 
+  /**
+   * This controller function handles the User's change of password after initiating the password reset
+   * @param {*} req
+   * @param {*} res
+   * @returns
+   */
   changePassword: async (req, res) => {
     try {
       // receive input
