@@ -46,7 +46,6 @@ const AuthController = {
       const user = await AuthModel.signUp({
         email,
         password,
-
         verificationToken: token,
       });
 
@@ -183,7 +182,7 @@ const AuthController = {
       // Return a success response
       return helper.Response(res, 200, "Password Reset link sent", link);
     } catch (error) {
-      return sendResponse(res, 500, error.toString());
+      return helper.Response(res, 500, error.toString());
     }
   },
 
