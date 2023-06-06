@@ -1,6 +1,4 @@
-
 const helper = require("../utils/helpers");
-require("dotenv").config();
 
 const userAuthenticate = async function (req, res, next) {
   try {
@@ -19,23 +17,22 @@ const userAuthenticate = async function (req, res, next) {
     // Verify JWT token and extract the payload
     const user = await helper.verifyJWT(token);
     req.user = user;
-
     next();
   } catch (error) {
-    return sendResponse(res, 500, error.toString());
+    return helper.Response(res, 500, error.toString());
   }
 };
 
-/* const userAuthorize = async function (req, res, next) {
-  const userRole = decoded.user.role;
-  const userVerified = decoded.user.isVerified;
-  if (userRole !== "student") {
-    return sendResponse(res, 403, "Not authorized to access this resource");
-  }
-  if (!userVerified.email) {
-    return sendResponse(res, 404, "Email Not Verified");
-  } else {
-    req.user = decoded.user;
-  }
-}; */
 
+const authRole = (role) => {
+  return (req, res, next) => {
+    // Check if the user's role is allowed
+    if (role === req.user.role) {
+      next(); // User is authorized, proceed to the next middleware/route handler
+    } else {
+      return helper.Response(res, 403, 'Unauthorized to access this route');
+    }
+  };
+};
+
+module.exports = { userAuthenticate, authRole }

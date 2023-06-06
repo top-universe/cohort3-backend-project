@@ -83,7 +83,7 @@ const AuthController = {
       const user = await AuthModel.checkIfUserExists(email);
 
       if (!user) {
-        return sendResponse(res, 404, "User not found");
+        return helper.Response(res, 404, "User not found");
       }
 
       // Compare the provided password with the stored password

@@ -19,4 +19,4 @@ exports.sendEmail = async (to, subject, body) => {
 };
 
 // Usage
-//sendEmail('marvelousakporowho@gmail.com', 'Hello', 'This is the email body.');
+// sendEmail('marvelousakporowho@gmail.com', 'Hello', 'This is the email body.');
