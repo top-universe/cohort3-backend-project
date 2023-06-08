@@ -1,4 +1,6 @@
 const Course = require('./Schema');
+const upload = require("../../client/awsFileUtils")
+require("dotenv").config();
 
 const courseRepo = {
     createCourse: async (title, description, instructorID) => {
@@ -101,10 +103,10 @@ const lessonRepo = {
         lesson.remove();
         await course.save();
     },
-    uploadLesson: async (courseId, lessonId) => {
+    uploadLesson: async (courseId, lessonId, uploadParameters) => {
         try {
             // Find the course by ID
-            const course = await courseModel.findById(courseId);
+            const course = await Course.findById(courseId);
 
             // Check if the course exists
             if (!course) {
@@ -118,13 +120,13 @@ const lessonRepo = {
             if (!lesson) {
                 throw new Error('Lesson not found');
             }
-
             // Handle the file upload process here using Digital Oceans
-
-            // Access the uploaded file details from req.file
-
+            const data = await  upload(uploadParameters);
+            console.log("--------------------------------------------------------------")
             // Save the file details to the lesson or course
-
+            const fileUrl = `https://${process.env.DO_BUCKET_NAME}.${process.env.DO_SPACES_ENDPOINT}/${uploadParameters.Key}`;
+            lesson.lessonURL =fileUrl;
+            await course.save();
             return lesson;
         } catch (error) {
             throw error;

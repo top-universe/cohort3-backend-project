@@ -22,7 +22,7 @@ const AuthController = {
       // Check for duplicates
       const userExists = await AuthModel.checkIfUserExists(email);
       if (userExists) {
-        helper.Response(res, 409, "Email Already in use.");
+        return helper.Response(res, 409, "Email Already in use.");
       }
 
       // Hash the password - BCRYPT
@@ -34,7 +34,12 @@ const AuthController = {
       // 2. Generate Link and append that token to the link
       const keyPath = "verifyemail";
       const link = helper.generateLink(keyPath, token);
-
+      // save to the records to database
+      const user = await AuthModel.signUp({
+        email,
+        password,
+        verificationToken: token,
+      });
       // Email the verification Link to the user
       await sendEmail(
         email,
@@ -42,17 +47,9 @@ const AuthController = {
         `Kindly click on the link to proceed with your account verification ${link}`
       );
 
-      // save to the records to database
-      const user = await AuthModel.signUp({
-        email,
-        password,
-        verificationToken: token,
-      });
-
       // send success response
       // data property contains verification link while postmark isnt in use now
-
-      helper.Response(
+      return helper.Response(
         res,
         201,
         "Registration Successful. Verification link sent to your email.",
@@ -60,8 +57,7 @@ const AuthController = {
       );
     } catch (err) {
       // send back error
-
-      helper.Response(res, 501, err.toString());
+      return helper.Response(res, 501, err.toString());
     }
   },
 

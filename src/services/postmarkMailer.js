@@ -11,7 +11,6 @@ exports.sendEmail = async (to, subject, body) => {
       Subject: subject,
       HtmlBody: body,
     });
-
     console.log("Email sent successfully:", response.Message);
   } catch (error) {
     console.error("Error sending email:", error.message);
