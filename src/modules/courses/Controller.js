@@ -21,9 +21,10 @@ const courseController = {
       if (!isOwner) {
         return helper.Response(res, 403, 'You are not authorized to update this course');
       }
-
+      //update course
       const course = await courseRepo.updateCourse(courseId, title, description);
-
+      
+      //course is null?
       if (!course) {
         return helper.Response(res, 404, 'Course not found');
       }
