@@ -1,4 +1,5 @@
 const Course = require('./Schema');
+const User = require("../auth/Schema")
 const upload = require("../../client/awsFileUtils")
 require("dotenv").config();
 
@@ -51,7 +52,7 @@ const courseRepo = {
 
 
 const lessonRepo = {
-    createLesson: async (courseId, title, content) => {
+    createLesson: async (courseId, title, Description) => {
         const course = await Course.findById(courseId);
 
         if (!course) {
@@ -60,14 +61,14 @@ const lessonRepo = {
 
         const lesson = {
             lessonTitle: title,
-            lessonContent: content
+            lessonDescription: Description
         };
 
         course.lessons.push(lesson);
         await course.save();
         return lesson;
     },
-    updateLesson: async (courseId, lessonId, title, content) => {
+    updateLesson: async (courseId, lessonId, title, Description) => {
         const course = await Course.findById(courseId);
 
         if (!course) {
@@ -81,7 +82,7 @@ const lessonRepo = {
         }
 
         lesson.lessonTitle = title;
-        lesson.lessonContent = content;
+        lesson.lessonDescription = Description;
 
         await course.save();
 
@@ -121,11 +122,11 @@ const lessonRepo = {
                 throw new Error('Lesson not found');
             }
             // Handle the file upload process here using Digital Oceans
-            const data = await  upload(uploadParameters);
-            console.log("--------------------------------------------------------------")
+            const data = await upload(uploadParameters);
+            console.log("[--------------------------------------------------------------]")
             // Save the file details to the lesson or course
-            const fileUrl = `https://${process.env.DO_BUCKET_NAME}.${process.env.DO_SPACES_ENDPOINT}/${uploadParameters.Key}`;
-            lesson.lessonURL =fileUrl;
+            const fileUrl = `${process.env.DO_SPACES_LESSON}${uploadParameters.Key}`;
+            lesson.lessonURL = fileUrl;
             await course.save();
             return lesson;
         } catch (error) {

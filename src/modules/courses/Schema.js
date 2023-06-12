@@ -14,17 +14,25 @@ const courseSchema = new Schema({
     ref: 'User',
     required: true,
   },
-  students: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],
+  students: [
+    {
+      student: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      paymentStatus: {
+        type: Boolean,
+        default: false,
+      },
+    },
+  ],
   lessons: {
     type: [
       {
         lessonTitle: String,
-        lessonContent: String,
+        lessonDescription: String,
         lessonURL:String, //url of uploaded lesson 
-        //extra fields(possible)
       }
     ],
     default: [],

@@ -17,12 +17,6 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     required: true,
-    validate: {
-      validator: function (v) {
-        return v.endsWith(".com");
-      },
-      message: (err) => `${err.value} is not a valid email.`,
-    },
     default: "empty@gmail.com",
   },
   password: {
@@ -35,13 +29,15 @@ const userSchema = new Schema({
     type: String,
     default: "student",
   },
+  course: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Course' // This refers to the 'Course' collection
+    }],
   isVerified: {
     type: Boolean,
     default: false,
   },
-
   verificationToken: {
-
     type: String,
     default: null,
   },

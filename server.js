@@ -1,7 +1,8 @@
 const express = require("express");
 require("dotenv").config();
 const connectToDB = require("./src/config/database");
-const userRoutes = require("./src/modules/auth/Route");
+const authRoutes = require("./src/modules/auth/Route");
+const userRoutes= require("./src/modules/user/Route")
 const courseRoutes = require("./src/modules/courses/Route");
 const helper = require("./src/utils/helpers");
 
@@ -10,8 +11,10 @@ server.use(express.json());
  
 // Mounting Routes
 // server.use(router);
+server.use("/api", authRoutes);
 server.use("/api", userRoutes);
 server.use("/api", courseRoutes);
+
 server.use((req, res, next) => { next(new Error(`Could not handle request to ${req.url}`)); });
 server.use((err, req, res, next) => { helper.Response(res, 404, err.toString()) });
 

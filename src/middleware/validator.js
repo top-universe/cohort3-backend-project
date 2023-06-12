@@ -22,14 +22,13 @@ const courseValidator = {
         validateRequest(res,req, schema);
         next();
     },
-
 };
 //Lessons-Validator
 const lessonValidator = {
     createLessonValidator: (res,req,next) => {
         const schema = Joi.object({
             title: Joi.string().required(),
-            content: Joi.string().required(),
+            Description: Joi.string().required(),
         });
 
         validateRequest(res,req, schema);
@@ -39,13 +38,14 @@ const lessonValidator = {
     updateLessonValidator: (res,req,next) => {
         const schema = Joi.object({
             title: Joi.string().required(),
-            content: Joi.string().required(),
+            Description: Joi.string().required(),
         });
 
         validateRequest(res,req, schema);
         next();
     },
 };
+
 //General-Validator
 function validateRequest(res,req, schema) {
     const { error } = schema.validate(req.body);

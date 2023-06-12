@@ -32,3 +32,5 @@ exports.updateRecord = async (id, updatedData) => {
   }
 };
 
+// Function to get UserbyId
+
